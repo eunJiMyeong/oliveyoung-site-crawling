@@ -1,1 +1,2 @@
-asdjkfjs
+testVal = 'hello world'
+print(testVal)
