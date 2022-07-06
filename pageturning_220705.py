@@ -20,34 +20,33 @@ options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
 # 브라우저 생성
 browser = webdriver.Chrome(r'C:/chromedriver.exe',options=options)  # 크롬 브라우저 생성, 크롬드라이브 저장된 경로 입력
-# # 올리브영 웹사이트 열기 
-# browser.get('https://www.oliveyoung.co.kr/store/main/main.do?oy=0')
-# browser.implicitly_wait(10) #웹사이트 열 동안 10초까지는 기다려줌(웹사이트 로딩이 느리면 그 다음 열라고 선택한 태그를 찾을 수 없어서 에러남)
-# # 카테고리 클릭
-# browser.find_element(By.ID, 'btnGnbOpen').click()
+# 올리브영 웹사이트 열기 
+browser.get('https://www.oliveyoung.co.kr/store/main/main.do?oy=0')
+browser.implicitly_wait(10) #웹사이트 열 동안 10초까지는 기다려줌(웹사이트 로딩이 느리면 그 다음 열라고 선택한 태그를 찾을 수 없어서 에러남)
+# 카테고리 클릭
+browser.find_element(By.ID, 'btnGnbOpen').click()
 
-# # 스킨케어 > 스킨/로션/올인원 클릭
-# browser.find_element(By.XPATH, '//*[@id="gnbAllMenu"]/ul/li[1]/div[1]/ul[1]/li[1]/a').click()
-# # 카테고리 내 첫번째 상품 클릭
-# browser.find_element(By.XPATH, '//*[@id="Contents"]/ul[2]/li[1]/div').click()
-# time.sleep(2)
-# # 리뷰 클릭
+# 스킨케어 > 스킨/로션/올인원 클릭
+browser.find_element(By.XPATH, '//*[@id="gnbAllMenu"]/ul/li[1]/div[1]/ul[1]/li[1]/a').click()
+# 카테고리 내 첫번째 상품 클릭
+browser.find_element(By.XPATH, '//*[@id="Contents"]/ul[2]/li[1]/div').click()
+time.sleep(2)
+# 리뷰 클릭
+browser.find_element(By.CSS_SELECTOR, '.goods_reputation').click()
+time.sleep(2)
+
+
+# # 리뷰 동작 테스트
+# browser.get('https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000149425&dispCatNo=100000100010008&trackingCd=Cat100000100010008_Small')
+# browser.implicitly_wait(10) 
 # browser.find_element(By.CSS_SELECTOR, '.goods_reputation').click()
 # time.sleep(2)
 
 
-
-
-browser.get('https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000149425&dispCatNo=100000100010008&trackingCd=Cat100000100010008_Small')
-browser.implicitly_wait(10) 
-browser.find_element(By.CSS_SELECTOR, '.goods_reputation').click()
-time.sleep(2)
 # 리뷰 긁어오기
-reviewNum = browser.find_element(By.CSS_SELECTOR, 'p.total>em').text
+reviewNum = browser.find_element(By.CSS_SELECTOR, 'p.total>em').text # 총 리뷰수 계산
 time.sleep(2)
-print(reviewNum)
-aa = reviewNum.replace(',','')
-print(aa)
+reviewNum = reviewNum.replace(',','')
 
 
 def find_and_add(x):      # 리뷰 페이지에서 id, review, date 텍스트 스크래핑
