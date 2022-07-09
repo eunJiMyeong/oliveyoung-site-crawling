@@ -41,7 +41,6 @@ browser.find_element(By.ID, 'btnGnbOpen').click()
 time.sleep(2)
 
 category_lists = browser.find_elements(By.CSS_SELECTOR, 'ul.all_menu_wrap>li div li a')
-print(len(category_lists))
 
 #카테고리 내 소카테고리 클릭
 for category in range(1,103):
