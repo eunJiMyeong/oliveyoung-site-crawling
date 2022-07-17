@@ -6,8 +6,8 @@ import common.util.collectRV as COL
 
 options = webdriver.ChromeOptions()
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
-chomeDriverPath = 'C:\Python\chromedriver\chromedriver.exe'
-browser = webdriver.Chrome(chomeDriverPath, options=options)
+# chomeDriverPath = 'C:\Python\chromedriver\chromedriver.exe'
+browser = webdriver.Chrome(r'C:/chromedriver.exe', options=options)
 browser.get('https://www.oliveyoung.co.kr/store/main/main.do?oy=0')
 
 pageInfo = {
@@ -21,9 +21,10 @@ pageInfo = {
     'totalProductCount': 0,  # 전체 상품 카운트 (선택한 카테고리 하위에 상품수)
 
     'product_pages_num': 0,  # 상품
+    'product_info': []
 }
 
-for testX in range(0, 2):  # 테스트용 두개 상품
+for testX in range(0, 2):  # 테스트용 while 로 돌리기
     # 카테고리 클릭
     browser.find_element(By.ID, 'btnGnbOpen').click()
     time.sleep(2)
@@ -47,25 +48,27 @@ for testX in range(0, 2):  # 테스트용 두개 상품
 
     # 상품이 현재 페이지가 아니면 다음 상품페이지로 이동 하는 함수 추가
 
-    pointX = (pageInfo['productIndex'] % 4) + 1
-    pointY = (pageInfo['productIndex'] // 4) + 2
+    pointX = (pageInfo['productIndex'] % 4) + 1  # 1,2,3,4
+    pointY = (pageInfo['productIndex'] // 4) + 2  # 2,2,2,2,3,3,3,3,...,7 
+    present_product_page = (pageInfo['productIndex'] //24)+1
 
-    # 기능 추가
-    # 상품의 개수가 24개를 넘어가면 다음페이지의 상품을 클릭할 수 있도록 기능 추가
-    # 다음페이지의 상품을 클릭하려면 pointY 의 숫자를 조절해주어야한다
-
-    # products_pg_bttn = browser.find_element(By.CSS_SELECTOR, '.pageing>a')
-    # time.sleep(2)
-    # browser.execute_script(
-    #     "arguments[0].setAttribute('data-page-no',arguments[1])", products_pg_bttn, 0) # TODO 상품 페이지 넘어가는거 추가해야함
-    # time.sleep(1)
-    # products_pg_bttn.click()
-    # time.sleep(2)
+    products_pg_bttn = browser.find_element(By.CSS_SELECTOR, '.pageing>a')
+    time.sleep(2)
+    if present_product_page > 1:
+        pointY = pointY - (present_product_page-1 * 6 )
+        browser.execute_script(
+            "arguments[0].setAttribute('data-page-no',arguments[1])", products_pg_bttn, present_product_page) 
+        time.sleep(1)
+        products_pg_bttn.click()
+        time.sleep(2)
+    
 
     productData = {'name': '',
                    'seq': pageInfo['productIndex'],
                    'reviewData': [[], [], [], []]
                    }
+
+    productData['name'] = browser.find_element(By.CSS_SELECTOR, '.prd_name').text
 
     # 상품을 클릭
     browser.find_element(
@@ -112,13 +115,20 @@ for testX in range(0, 2):  # 테스트용 두개 상품
         productData['reviewData'][2].extend(rD[2])
         productData['reviewData'][3].extend(rD[3])
 
+    pageInfo['product_info'].append(productData)
+
     # 리뷰를 전부 크롤링했다면
     # 마지막 상품이 아니라면 다음 상품
     if (pageInfo['productIndex'] != pageInfo['totalProductCount']):
         pageInfo['productIndex'] = pageInfo['productIndex'] + \
             1         # 상품번호 + 1
+        
     else:  # 상품이 마지막 상품이면
         pageInfo['categoryIndex'] = pageInfo['categoryIndex'] + \
             1       # 카테고리 + 1
         # 상품번호 = 0 (초기화)
         pageInfo['productIndex'] = 0
+        if pageInfo['categoryIndex'] == pageInfo['totalCategoryCount']:
+            browser.quit()
+
+print(pageInfo)
