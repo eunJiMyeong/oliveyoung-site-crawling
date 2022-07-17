@@ -68,12 +68,12 @@ for testX in range(0, 2):  # 테스트용 while 로 돌리기
                    'reviewData': [[], [], [], []]
                    }
 
-    productData['name'] = browser.find_element(By.CSS_SELECTOR, '.prd_name').text
 
     # 상품을 클릭
     browser.find_element(
         By.XPATH, f'//*[@id="Contents"]/ul[{pointY}]/li[{pointX}]/div').click()
     time.sleep(2)
+    productData['name'] = browser.find_element(By.CSS_SELECTOR, '.prd_name').text
 
     # 리뷰 창 클릭
     browser.find_element(
@@ -95,7 +95,7 @@ for testX in range(0, 2):  # 테스트용 while 로 돌리기
 
     # 리뷰페이지 수만큼 클릭
     # 원래 range(1,int(review_pages_num)+1)
-    for review_page in range(1, 3):
+    for review_page in range(1, 2):
         review_pg_bttn = browser.find_element(
             By.CSS_SELECTOR, '.pageing>a')
         time.sleep(2)
