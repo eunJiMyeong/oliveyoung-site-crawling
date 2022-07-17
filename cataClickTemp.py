@@ -50,6 +50,10 @@ for testX in range(0, 2):  # 테스트용 두개 상품
     pointX = (pageInfo['productIndex'] % 4) + 1
     pointY = (pageInfo['productIndex'] // 4) + 2
 
+    # 기능 추가
+    # 상품의 개수가 24개를 넘어가면 다음페이지의 상품을 클릭할 수 있도록 기능 추가
+    # 다음페이지의 상품을 클릭하려면 pointY 의 숫자를 조절해주어야한다
+
     # products_pg_bttn = browser.find_element(By.CSS_SELECTOR, '.pageing>a')
     # time.sleep(2)
     # browser.execute_script(
