@@ -85,7 +85,7 @@ for category in range(1, 103):
                         By.CSS_SELECTOR, '.goods_reputation').click()
                     time.sleep(2)
 
-                    # 리뷰 긁어오기
+                    # 리뷰 갯수 확인
                     review_pages = browser.find_element(
                         By.CSS_SELECTOR, 'p.total>em').text  # 총 리뷰수 계산
                     time.sleep(2)
@@ -114,7 +114,7 @@ for category in range(1, 103):
                             By.CSS_SELECTOR, '.inner_list')
                         time.sleep(2)
                         collection = ['.id', '.txt_inner',
-                                      '.date', 'score_area']
+                                      '.date', '.score_area']
                         for i in collection:
                             ext = information_group.find_elements(
                                 By.CSS_SELECTOR, f'{i}')
@@ -132,23 +132,27 @@ for category in range(1, 103):
                                 date = find_and_add(ext)
                                 dates = [x for x in date]
                                 dates_group.extend(dates)
-                            elif i == 'score_area':
-                                체험단 = ext.find_elements(
-                                    By.CSS_SELECTOR, '.ico_oyGroup')
-                                if len(체험단):
-                                    newVal = 'Y'
 
-                        # 체험단 필터링 - 무상으로 제공받은 제품의 경우 False값 부여
-                        for i in range(1, 11):
-                            filter = browser.find_elements(
-                                By.XPATH, f'//*[@id="gdasList"]/li[{i}]/div[2]/div[1]/span[3]')
-                            time.sleep(2)
-                            if len(filter) == 0:
-                                exps_group.append('True')
-                            elif filter[0].get_attribute("class") == 'ico_offlineStore':
-                                exps_group.append('True')
-                            else:
-                                exps_group.append('False')
+                            elif i == '.score_area':
+                                for x in ext:
+                                    if x.find_elements(By.CSS_SELECTOR, '.ico_oyGroup'):
+                                        exps_group.append('False')
+                                    elif x.find_elements(By.CSS_SELECTOR, '.ico_offlineStore'):
+                                        exps_group.append('True')
+                                    else:
+                                        exps_group.append('True')
+
+                        # # 체험단 필터링 - 무상으로 제공받은 제품의 경우 False값 부여
+                        # for i in range(1, 11):
+                        #     filter = browser.find_elements(
+                        #         By.XPATH, f'//*[@id="gdasList"]/li[{i}]/div[2]/div[1]/span[3]')
+                        #     time.sleep(2)
+                        #     if len(filter) == 0:
+                        #         exps_group.append('True')
+                        #     elif filter[0].get_attribute("class") == 'ico_offlineStore':
+                        #         exps_group.append('True')
+                        #     else:
+                        #         exps_group.append('False')
 
 
 print(ids_group)

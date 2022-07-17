@@ -103,6 +103,7 @@ for page in pagenum:
     rvpage.click()
     time.sleep(2)
     
+    
 
 print(ids_group)
 print(reviews_group)
