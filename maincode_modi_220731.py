@@ -1,9 +1,9 @@
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 import time
-import collectRV as COL
+import common.util.collectRV as COL
 import pandas as pd
-import saving_excel as sv
+import common.util.saving_excel as sv
 
 
 options = webdriver.ChromeOptions()
