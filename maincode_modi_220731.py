@@ -4,6 +4,7 @@ import time
 import common.util.collectRV as COL
 import pandas as pd
 import common.util.saving_excel as sv
+import re
 
 
 options = webdriver.ChromeOptions()
@@ -15,14 +16,14 @@ pageInfo = {
     'categoryIndex': 0,  # 현재 소 카테고리
     'totalCategoryCount': 0,  # 전체 소 카테고리 카운트
 
-    'productIndex': 0,  # 현재 상품 번호
+    'productIndex': 184,  # 현재 상품 번호
     'totalProductCount': 0,  # 전체 상품 카운트 (선택한 카테고리 하위에 상품수)
 
     'product_pages_num': 0,  # 상품
     'product_info': []
 }
 
-while(pageInfo['categoryIndex']==0):  # 테스트용 
+while(pageInfo['categoryIndex']==0 and pageInfo['productIndex']<=186):  # 테스트용 
     
     productData = {'name': '',
                 'm_category_name':'',
@@ -70,7 +71,7 @@ while(pageInfo['categoryIndex']==0):  # 테스트용
         pointX = pointX - ((present_product_page-1) * 6 ) 
         browser.execute_script(
             "arguments[0].setAttribute('data-page-no',arguments[1])", products_pg_bttn, present_product_page)
-        time.sleep(1)
+        time.sleep(2)
         products_pg_bttn.click()
         time.sleep(2)
     # 상품을 클릭
@@ -85,10 +86,10 @@ while(pageInfo['categoryIndex']==0):  # 테스트용
 
     # 리뷰 수 계산
     review_pages = browser.find_element(
-        By.CSS_SELECTOR, 'p.total>em').text
+        By.CSS_SELECTOR, '.goods_reputation>span').text
     time.sleep(2)
-    review_pages = review_pages.replace(',', '')
-    review_pages_num = (int(review_pages)//10) + 1
+    review_pages = re.sub(r'[^0-9]', '', review_pages)
+    review_pages_num = 0 if review_pages == 0 else (int(review_pages)//10) + 1
 
     # 리뷰수가 아무리 많아도 리뷰 페이지는 100페이지까지만 노출됨
     if review_pages_num <= 100:
@@ -99,7 +100,13 @@ while(pageInfo['categoryIndex']==0):  # 테스트용
     # 리뷰페이지 수만큼 클릭
     # 원래 range(1,int(review_pages_num)+1)
     for review_page in range(1,3):
-        if review_pages_num != 1:
+        if review_pages_num == 0:  # 리뷰가 하나도 없는 상품의 경우
+            productData['reviewData'][0].append("no")
+            productData['reviewData'][1].append("no")
+            productData['reviewData'][2].append("no")
+            productData['reviewData'][3].append("no")
+
+        elif review_pages_num != 1: # 리뷰페이지가 2페이지 이상인 상품 파싱용
             review_pg_bttn = browser.find_element(
                 By.CSS_SELECTOR, '.pageing>a')
             time.sleep(2)
@@ -108,7 +115,7 @@ while(pageInfo['categoryIndex']==0):  # 테스트용
             time.sleep(1)
             review_pg_bttn.click()
             time.sleep(2)
-
+        
         # 리뷰 페이지에서 아이디, 리뷰내용, 날짜, 체험단YN 수집
         information_group = browser.find_element(
             By.CSS_SELECTOR, '.inner_list')
